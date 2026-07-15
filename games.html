@@ -161,37 +161,40 @@
     </div>
 
     <script>
+        // ============================================================
+        // ★★★ 配置区（与 level.html 完全一致）★★★
+        // ============================================================
         const CONFIG = {
             zh: {
-                name: '中文',
+                name: '中文 Chino',
                 emoji: '🐉',
                 levels: [
                     {
                         id: 'L1',
-                        name: '第一课',
-                        desc: '基础汉字与拼音',
+                        name: 'L1 第一课',
+                        desc: 'Saludos y Pronombres',
                         icon: '🀄',
                         games: [
-                            { name: '汉字配对', file: 'game1.html' },
-                            { name: '听力挑战', file: 'game2.html' },
-                            { name: '笔画顺序', file: 'game3.html' },
+                            { name: 'Saludos 问候', file: 'l1-1_saludos.html' },
+                            { name: 'Pronombres 人称', file: 'l1-2_pronombres.html' },
+                            { name: 'Saludos y Pronombres 问候与人称', file: 'l1_saludos_y_pronombres.html' },
                         ]
                     },
                     {
                         id: 'L2',
-                        name: '第二课',
-                        desc: '日常用语与词汇',
+                        name: 'L2 第二课',
+                        desc: 'Familias y Pronombres',
                         icon: '📖',
                         games: [
-                            { name: '词语接龙', file: 'game4.html' },
-                            { name: '句子排序', file: 'game5.html' },
-                            { name: '看图识字', file: 'game6.html' },
+                            { name: 'Familias 亲属', file: 'l2-1_familias.html' },
+                            { name: 'Profesiones 职业', file: 'l2-2_profesiones.html' },
+                            { name: '看图识字', file: 'l2_familias_y_profesiones.html' },
                         ]
                     },
                     {
                         id: 'L3',
-                        name: '第三课',
-                        desc: '成语与故事',
+                        name: 'L3 第三课',
+                        desc: 'Numeros y Fechas',
                         icon: '📜',
                         games: [
                             { name: '成语填空', file: 'game7.html' },
@@ -206,40 +209,46 @@
                 levels: [
                     {
                         id: 'L1',
-                        name: 'Nivel 1',
-                        desc: 'Saludos y vocabulario básico',
+                        name: 'L1 动词',
+                        desc: '动词的现在时变位',
                         icon: '👋',
                         games: [
-                            { name: 'Saludos', file: 'game9.html' },
-                            { name: 'Números', file: 'game10.html' },
-                            { name: 'Colores', file: 'game11.html' },
+                            { name: '动词1-基础动词', file: 'l1-1_v1_presente.html' },
+                            { name: '动词2-进阶动词A', file: 'l1-2_v2_presente.html' },
+                            { name: '动词3-进阶动词B', file: 'l1-3_v3_presente.html' },
                         ]
                     },
                     {
                         id: 'L2',
-                        name: 'Nivel 2',
-                        desc: 'Frases cotidianas',
+                        name: 'L2 动词的副动词和过去分词',
+                        desc: '副动词和过去分词',
                         icon: '💬',
                         games: [
-                            { name: 'La familia', file: 'game12.html' },
-                            { name: 'La comida', file: 'game13.html' },
+                            { name: '动词1-基础动词', file: 'l2-1_v1_gerundio_pp.html' },
+                            { name: '动词2-进阶动词A', file: 'l2-2_v1_gerundio_pp.html' },
+                            { name: '动词3-进阶动词B', file: 'l2-3_v3_gerundio_pp.html' },
                         ]
                     },
                     {
                         id: 'L3',
-                        name: 'Nivel 3',
-                        desc: 'Gramática básica',
+                        name: 'L3 词汇',
+                        desc: '其他非动词词汇',
                         icon: '📚',
                         games: [
-                            { name: 'Verbos', file: 'game14.html' },
-                            { name: 'Adjetivos', file: 'game15.html' },
-                            { name: 'Pasado simple', file: 'game16.html' },
-                            { name: 'Futuro', file: 'game17.html' },
+                            { name: '一般词汇 Lexico 1', file: 'lexico1.html' },
+                            { name: '一般词汇 Lexico 2', file: 'lexico2.html' },
+                            { name: '专业词汇 Lexico Tenico 1', file: 'lexico_tecnico1.html' },
                         ]
                     }
                 ]
             }
         };
+        // ============================================================
+        // 配置区结束
+        // ============================================================
+
+
+        // --- 以下代码自动根据 CONFIG 渲染页面，不需要修改 ---
 
         function getQueryParam(param) {
             const url = new URL(window.location.href);
