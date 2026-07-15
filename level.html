@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>选择等级 - 多语言学习园地</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .page-title {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .page-title .lang-emoji {
+            margin-right: 10px;
+        }
+
+        .level-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .level-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 40px 50px;
+            width: 260px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+
+        .level-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .level-card .level-icon {
+            font-size: 56px;
+            margin-bottom: 10px;
+        }
+
+        .level-card .level-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .level-card .level-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .level-card .game-count {
+            display: inline-block;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 18px;
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .level-card {
+                width: 100%;
+                padding: 30px 20px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-bar">
+            <a href="index.html" class="back-btn">← 返回</a>
+            <h1 class="page-title" id="pageTitle">🌍 选择等级</h1>
+        </div>
+
+        <div class="level-grid" id="levelGrid">
+        </div>
+
+        <footer>🧧 快乐学习 · 每天进步一点点</footer>
+    </div>
+
+    <script>
+        const CONFIG = {
+            zh: {
+                name: '中文',
+                emoji: '🐉',
+                levels: [
+                    {
+                        id: 'L1',
+                        name: '第一课',
+                        desc: '基础汉字与拼音',
+                        icon: '🀄',
+                        games: [
+                            { name: '汉字配对', file: 'game1.html' },
+                            { name: '听力挑战', file: 'game2.html' },
+                            { name: '笔画顺序', file: 'game3.html' },
+                        ]
+                    },
+                    {
+                        id: 'L2',
+                        name: '第二课',
+                        desc: '日常用语与词汇',
+                        icon: '📖',
+                        games: [
+                            { name: '词语接龙', file: 'game4.html' },
+                            { name: '句子排序', file: 'game5.html' },
+                            { name: '看图识字', file: 'game6.html' },
+                        ]
+                    },
+                    {
+                        id: 'L3',
+                        name: '第三课',
+                        desc: '成语与故事',
+                        icon: '📜',
+                        games: [
+                            { name: '成语填空', file: 'game7.html' },
+                            { name: '故事排序', file: 'game8.html' },
+                        ]
+                    }
+                ]
+            },
+            es: {
+                name: 'Español',
+                emoji: '💃',
+                levels: [
+                    {
+                        id: 'L1',
+                        name: 'Nivel 1',
+                        desc: 'Saludos y vocabulario básico',
+                        icon: '👋',
+                        games: [
+                            { name: 'Saludos', file: 'game9.html' },
+                            { name: 'Números', file: 'game10.html' },
+                            { name: 'Colores', file: 'game11.html' },
+                        ]
+                    },
+                    {
+                        id: 'L2',
+                        name: 'Nivel 2',
+                        desc: 'Frases cotidianas',
+                        icon: '💬',
+                        games: [
+                            { name: 'La familia', file: 'game12.html' },
+                            { name: 'La comida', file: 'game13.html' },
+                        ]
+                    },
+                    {
+                        id: 'L3',
+                        name: 'Nivel 3',
+                        desc: 'Gramática básica',
+                        icon: '📚',
+                        games: [
+                            { name: 'Verbos', file: 'game14.html' },
+                            { name: 'Adjetivos', file: 'game15.html' },
+                            { name: 'Pasado simple', file: 'game16.html' },
+                            { name: 'Futuro', file: 'game17.html' },
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function getQueryParam(param) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(param);
+        }
+
+        const langCode = getQueryParam('lang');
+
+        if (!langCode || !CONFIG[langCode]) {
+            window.location.href = 'index.html';
+        }
+
+        const langData = CONFIG[langCode];
+        const levels = langData.levels;
+
+        document.getElementById('pageTitle').innerHTML =
+            `${langData.emoji} ${langData.name} · 选择等级`;
+
+        const grid = document.getElementById('levelGrid');
+
+        levels.forEach(level => {
+            const card = document.createElement('a');
+            card.className = 'level-card';
+            card.href = `games.html?lang=${langCode}&level=${level.id}`;
+
+            card.innerHTML = `
+                <div class="level-icon">${level.icon}</div>
+                <div class="level-name">${level.name}</div>
+                <div class="level-desc">${level.desc}</div>
+                <span class="game-count">🎮 ${level.games.length} 个小游戏</span>
+            `;
+
+            grid.appendChild(card);
+        });
+    </script>
+
+</body>
+</html>
