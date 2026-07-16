@@ -252,7 +252,12 @@
     <div class="action-area">
         <button id="playAudioBtn">🔊 Escuchar</button>
         <button id="resetGameBtn">🔄 Jugar de nuevo</button>
-        <button id="exitGameBtn">🚪 Salir</button>
+        <a href="games.html?lang=zh&level=L2" style="text-decoration:none;">
+            <button style="background:#2980b9; color:white; box-shadow:0 6px 0 #1a5276; border:1px solid #5dade2;">📋 Volver</button>
+        </a>
+        <a href="index.html" style="text-decoration:none;">
+            <button style="background:#c0392b; color:white; box-shadow:0 6px 0 #78281f; border:1px solid #e74c3c;">🏠 Inicio</button>
+        </a>
     </div>
     <div class="message-box" id="messageBox"><span>✨</span> Haz clic en «Escuchar» para empezar</div>
     <div class="footer-note">✔ Puedes rectificar · Máximo 3 errores por nivel · Acierta todo para avanzar</div>
@@ -307,7 +312,6 @@
         const errorCounter = document.getElementById('errorCounter');
         const playBtn = document.getElementById('playAudioBtn');
         const resetBtn = document.getElementById('resetGameBtn');
-        const exitBtn = document.getElementById('exitGameBtn');
 
         const synth = window.speechSynthesis;
         let utterance = null;
@@ -653,19 +657,9 @@
             messageBox.innerHTML = `🔄 Reiniciado desde el Nivel 1`;
         }
 
-        function exitGame() {
-            if (synth && synth.speaking) synth.cancel();
-            messageBox.innerHTML = `👋 ¡Hasta luego! Recarga la página para volver a jugar`;
-            document.querySelectorAll('.card').forEach(c => c.classList.add('disabled'));
-            playBtn.disabled = true;
-            resetBtn.disabled = true;
-            exitBtn.disabled = true;
-        }
-
         // ---------- Eventos ----------
         playBtn.addEventListener('click', playNextAudio);
         resetBtn.addEventListener('click', resetGame);
-        exitBtn.addEventListener('click', exitGame);
 
         // ---------- Iniciar ----------
         setupLevel(1);
