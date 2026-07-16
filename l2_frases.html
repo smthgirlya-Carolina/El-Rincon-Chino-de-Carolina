@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Juego de Palabras · Chino-Español</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #1e2b3c;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            margin: 0;
+        }
+        .game-container {
+            max-width: 1100px;
+            width: 100%;
+            background: #f0ece4;
+            border-radius: 48px 48px 32px 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 6px 12px rgba(0,0,0,0.3);
+            padding: 28px 24px 36px;
+            border: 2px solid #d6cdbc;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 600;
+            color: #1f2c3a;
+            font-size: 1.9rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .level-badge {
+            background: #2a3f54;
+            color: #f2ede2;
+            font-size: 1.1rem;
+            padding: 4px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            box-shadow: inset 0 -2px 0 #0f1a26;
+        }
+        .subhead {
+            text-align: center;
+            color: #2d3e4f;
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+            background: #dfd7ca;
+            border-radius: 60px;
+            padding: 10px 16px;
+        }
+        .error-counter {
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #8a2e2e;
+            background: #f5e3d7;
+            padding: 6px 16px;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 18px;
+            margin: 16px 0 24px;
+        }
+        .card {
+            background: #fcf9f2;
+            padding: 16px 8px;
+            border-radius: 28px;
+            box-shadow: 0 6px 0 #8f7e6b, 0 8px 16px rgba(0,0,0,0.15);
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1d2a33;
+            transition: all 0.08s linear;
+            cursor: pointer;
+            border: 3px solid #d4c8b6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 110px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .card.pinyin {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e2f3d;
+            background: #f5efe6;
+            border-color: #bfb2a0;
+        }
+        .card.pinyin .pinyin-text {
+            font-size: 0.9rem;
+            background: #d9cebd;
+            padding: 4px 16px;
+            border-radius: 30px;
+            color: #1f2d38;
+            margin-bottom: 6px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            order: -1;
+        }
+        .card.pinyin .chinese-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .card.selected {
+            background: #8bb77d;
+            border-color: #1d6b2a;
+            box-shadow: 0 4px 0 #0f4a1a, 0 8px 16px rgba(0,0,0,0.15);
+            transform: scale(0.96);
+            color: #0b2813;
+        }
+        .card.selected .pinyin-text {
+            background: #6fa35e;
+            color: #0b2813;
+        }
+        .card.wrong {
+            background: #e6847a;
+            border-color: #a1312a;
+            box-shadow: 0 4px 0 #6d211c;
+            color: #2d0e0b;
+        }
+        .card.wrong .pinyin-text {
+            background: #c95a4f;
+            color: #2d0e0b;
+        }
+        .card.disabled {
+            opacity: 0.6;
+            pointer-events: none;
+            filter: grayscale(0.3);
+        }
+        .action-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px 24px;
+            margin: 16px 0 12px;
+        }
+        button {
+            background: #d4c8b6;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1c2935;
+            box-shadow: 0 6px 0 #7e6f5d, 0 6px 12px rgba(0,0,0,0.15);
+            transition: all 0.06s linear;
+            cursor: pointer;
+            border: 1px solid #f2e7db;
+            letter-spacing: 1px;
+            flex: 0 1 auto;
+            min-width: 140px;
+        }
+        button:active { transform: translateY(4px); box-shadow: 0 2px 0 #655747; }
+        button:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #655747;
+            pointer-events: none;
+        }
+        .message-box {
+            background: #d8cdbc;
+            border-radius: 60px;
+            padding: 16px 24px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1a2833;
+            margin: 16px 0 0;
+            border: 2px solid #b9ab97;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .message-box span {
+            background: #2a3f54;
+            color: #f2ede2;
+            padding: 4px 18px;
+            border-radius: 40px;
+            font-size: 1.1rem;
+        }
+        .footer-note {
+            text-align: center;
+            color: #3d4f5e;
+            font-size: 0.95rem;
+            margin-top: 16px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 640px) {
+            .game-container { padding: 20px 12px; }
+            .cards-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 14px;
+            }
+            .card { 
+                font-size: 1.0rem; 
+                min-height: 90px;
+                padding: 12px 6px;
+            }
+            .card.pinyin .pinyin-text {
+                font-size: 0.8rem;
+            }
+            .card.pinyin .chinese-text {
+                font-size: 1.0rem;
+            }
+        }
+        @media (max-width: 440px) {
+            .cards-grid { 
+                grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+                gap: 10px;
+            }
+            .card { 
+                font-size: 0.9rem; 
+                min-height: 78px;
+            }
+            .card.pinyin .pinyin-text {
+                font-size: 0.7rem;
+            }
+            .card.pinyin .chinese-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container" id="app">
+    <h1>
+        <span>🎧 Emparejar Tarjetas</span>
+        <span class="level-badge" id="levelDisplay">Nivel 1</span>
+    </h1>
+    <div class="subhead" id="subheadText">🔊 Escucha español y elige la tarjeta china (con pinyin)</div>
+    <div style="text-align:center;">
+        <span class="error-counter" id="errorCounter">❌ Errores: 0 / 3</span>
+    </div>
+    <div class="cards-grid" id="cardsGrid"></div>
+    <div class="action-area">
+        <button id="playAudioBtn">🔊 Escuchar</button>
+        <button id="resetGameBtn">🔄 Jugar de nuevo</button>
+        <button id="exitGameBtn">🚪 Salir</button>
+    </div>
+    <div class="message-box" id="messageBox"><span>✨</span> Haz clic en «Escuchar» para empezar</div>
+    <div class="footer-note">✔ Puedes rectificar · Máximo 3 errores por nivel · Acierta todo para avanzar</div>
+</div>
+
+<script>
+    (function() {
+        // ---------- Vocabulario (11 frases: posesivos + familia) ----------
+        const VOCAB = [
+            { chinese: '我的爸爸', pinyin: 'wǒ de bà ba', spanish: 'mi papá' },
+            { chinese: '你的妈妈', pinyin: 'nǐ de mā ma', spanish: 'su mamá' },
+            { chinese: '他的爷爷', pinyin: 'tā de yé ye', spanish: 'el abuelo de él' },
+            { chinese: '我们的奶奶', pinyin: 'wǒ men de nǎi nai', spanish: 'nuestra abuela' },
+            { chinese: '你们的叔叔', pinyin: 'nǐ men de shū shu', spanish: 'el tío de ustedes' },
+            { chinese: '你的叔叔', pinyin: 'nǐ de shū shu', spanish: 'su tío' },
+            { chinese: '你的叔叔们', pinyin: 'nǐ de shū shu men', spanish: 'sus tíos' },
+            { chinese: '她们的阿姨', pinyin: 'tā men de ā yí', spanish: 'la tía de ellas' },
+            { chinese: 'Carlos的哥哥', pinyin: 'Carlos de gē ge', spanish: 'el hermano mayor de Carlos' },
+            { chinese: 'Carlos的弟弟', pinyin: 'Carlos de dì di', spanish: 'el hermano menor de Carlos' },
+            { chinese: '我的老师的姐姐', pinyin: 'wǒ de lǎo shī de jiě jie', spanish: 'la hermana mayor de mi profesor' }
+        ];
+
+        // ---------- 为包含人名的中文词条提供分段语音 ----------
+        // 返回数组: [西语人名部分, 中文剩余部分]
+        function getChineseSpeechParts(chinese) {
+            if (chinese === 'Carlos的哥哥') {
+                return { name: 'Carlos', rest: '的哥哥' };
+            }
+            if (chinese === 'Carlos的弟弟') {
+                return { name: 'Carlos', rest: '的弟弟' };
+            }
+            return null;
+        }
+
+        // ---------- 播放中文语音（包含人名时先播西语人名，再播中文） ----------
+        function speakChineseWithName(chinese, lang = 'zh-CN') {
+            return new Promise((resolve) => {
+                if (!synth) { resolve(); return; }
+                if (synth.speaking) synth.cancel();
+
+                const parts = getChineseSpeechParts(chinese);
+                if (!parts) {
+                    // 没有特殊人名，直接播放中文
+                    const utter = new SpeechSynthesisUtterance(chinese);
+                    utter.lang = lang;
+                    utter.rate = 0.85;
+                    utter.pitch = 1;
+                    utter.onend = () => resolve();
+                    utter.onerror = () => resolve();
+                    synth.speak(utter);
+                    return;
+                }
+
+                // 先播放西语人名
+                const nameUtter = new SpeechSynthesisUtterance(parts.name);
+                nameUtter.lang = 'es';
+                nameUtter.rate = 0.85;
+                nameUtter.pitch = 1;
+                nameUtter.onend = () => {
+                    // 再播放中文剩余部分
+                    const restUtter = new SpeechSynthesisUtterance(parts.rest);
+                    restUtter.lang = 'zh-CN';
+                    restUtter.rate = 0.85;
+                    restUtter.pitch = 1;
+                    restUtter.onend = () => resolve();
+                    restUtter.onerror = () => resolve();
+                    synth.speak(restUtter);
+                };
+                nameUtter.onerror = () => resolve();
+                synth.speak(nameUtter);
+            });
+        }
+
+        // ---------- Estado del juego ----------
+        let currentLevel = 1;
+        let cards = [];
+        let selectedIndices = [];
+        let audioQueue = [];
+        let isPlaying = false;
+        let gameCompleted = false;
+        let currentTargetChinese = null;
+        let isWaitingForMatch = false;
+        let errorCount = 0;
+        let levelPassed = false;
+        let levelFinished = false;
+        const MAX_ERRORS = 3;
+
+        const grid = document.getElementById('cardsGrid');
+        const levelDisplay = document.getElementById('levelDisplay');
+        const subheadText = document.getElementById('subheadText');
+        const messageBox = document.getElementById('messageBox');
+        const errorCounter = document.getElementById('errorCounter');
+        const playBtn = document.getElementById('playAudioBtn');
+        const resetBtn = document.getElementById('resetGameBtn');
+        const exitBtn = document.getElementById('exitGameBtn');
+
+        const synth = window.speechSynthesis;
+        let utterance = null;
+
+        // ---------- Funciones auxiliares ----------
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+        function shuffleCopy(arr) { return shuffleArray([...arr]); }
+
+        function speakText(text, lang = 'es') {
+            return new Promise((resolve) => {
+                if (!synth) { resolve(); return; }
+                if (synth.speaking) synth.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = lang;
+                utter.rate = 0.85;
+                utter.pitch = 1;
+                utter.onend = () => resolve();
+                utter.onerror = () => resolve();
+                synth.speak(utter);
+                utterance = utter;
+            });
+        }
+
+        // ---------- 欢快热烈的祝贺语音 ----------
+        function speakCelebration(text, lang = 'es') {
+            return new Promise((resolve) => {
+                if (!synth) { resolve(); return; }
+                if (synth.speaking) synth.cancel();
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = lang;
+                utter.rate = 1.2;
+                utter.pitch = 1.4;
+                utter.volume = 1;
+                utter.onend = () => resolve();
+                utter.onerror = () => resolve();
+                synth.speak(utter);
+                utterance = utter;
+            });
+        }
+
+        function updateErrorCounter() {
+            errorCounter.textContent = `❌ Errores: ${errorCount} / ${MAX_ERRORS}`;
+            if (errorCount >= MAX_ERRORS) {
+                errorCounter.style.color = '#b02a2a';
+                errorCounter.style.background = '#f5d0d0';
+            } else {
+                errorCounter.style.color = '#8a2e2e';
+                errorCounter.style.background = '#f5e3d7';
+            }
+        }
+
+        // ---------- Reiniciar nivel actual ----------
+        function resetCurrentLevel() {
+            if (synth && synth.speaking) synth.cancel();
+            errorCount = 0;
+            selectedIndices = [];
+            isPlaying = false;
+            gameCompleted = false;
+            levelFinished = false;
+            levelPassed = false;
+            isWaitingForMatch = false;
+            currentTargetChinese = null;
+            updateErrorCounter();
+            setupLevel(currentLevel);
+        }
+
+        // ---------- Renderizado ----------
+        function renderCards(cardData, showPinyin = true) {
+            grid.innerHTML = '';
+            const shuffled = shuffleCopy(cardData);
+            cards = shuffled.map((item, idx) => ({ ...item, _origIndex: idx }));
+
+            cards.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                if (showPinyin && item.pinyin) {
+                    card.classList.add('pinyin');
+                    card.innerHTML = `
+                        <span class="pinyin-text">${item.pinyin}</span>
+                        <span class="chinese-text">${item.chinese}</span>
+                    `;
+                } else if (currentLevel === 3) {
+                    card.textContent = item.spanish;
+                } else {
+                    card.textContent = item.chinese;
+                }
+                card.dataset.index = idx;
+                card.dataset.chinese = item.chinese;
+                card.dataset.spanish = item.spanish;
+
+                card.addEventListener('click', (e) => {
+                    if (isPlaying || gameCompleted || levelFinished) return;
+                    const index = parseInt(e.currentTarget.dataset.index, 10);
+                    handleCardClick(index);
+                });
+                grid.appendChild(card);
+            });
+            selectedIndices = [];
+            document.querySelectorAll('.card').forEach(c => {
+                c.classList.remove('selected', 'wrong', 'disabled');
+            });
+        }
+
+        function renderCardsLevel3(cardData) {
+            grid.innerHTML = '';
+            const shuffled = shuffleCopy(cardData);
+            cards = shuffled.map((item, idx) => ({ ...item, _origIndex: idx }));
+
+            cards.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.textContent = item.spanish;
+                card.dataset.index = idx;
+                card.dataset.chinese = item.chinese;
+                card.dataset.spanish = item.spanish;
+
+                card.addEventListener('click', (e) => {
+                    if (isPlaying || gameCompleted || levelFinished) return;
+                    const index = parseInt(e.currentTarget.dataset.index, 10);
+                    handleCardClick(index);
+                });
+                grid.appendChild(card);
+            });
+            selectedIndices = [];
+            document.querySelectorAll('.card').forEach(c => {
+                c.classList.remove('selected', 'wrong', 'disabled');
+            });
+        }
+
+        // ---------- Manejo de clics ----------
+        function handleCardClick(index) {
+            if (isPlaying || gameCompleted || levelFinished) return;
+            if (!isWaitingForMatch) {
+                messageBox.innerHTML = `🎵 Primero haz clic en «Escuchar» antes de elegir`;
+                return;
+            }
+            if (selectedIndices.includes(index)) {
+                messageBox.innerHTML = `⏳ Ya has acertado esta palabra`;
+                return;
+            }
+
+            const cardEl = document.querySelector(`.card[data-index="${index}"]`);
+            if (!cardEl) return;
+            const cardChinese = cardEl.dataset.chinese;
+            let isCorrect = false;
+
+            if (currentLevel === 3) {
+                isCorrect = (cardChinese === currentTargetChinese);
+            } else {
+                if (audioQueue.length > 0) {
+                    const currentAudio = audioQueue[0];
+                    if (currentAudio.lang === 'es') {
+                        const found = VOCAB.find(v => v.spanish === currentAudio.text);
+                        isCorrect = (found && found.chinese === cardChinese);
+                    } else {
+                        isCorrect = (cardChinese === currentAudio.chinese);
+                    }
+                }
+            }
+
+            if (isCorrect) {
+                cardEl.classList.add('selected');
+                cardEl.classList.remove('wrong');
+                selectedIndices.push(index);
+                if (audioQueue.length > 0) {
+                    audioQueue.shift();
+                    if (currentLevel === 3 && audioQueue.length > 0) {
+                        currentTargetChinese = audioQueue[0].chinese;
+                    } else if (currentLevel === 3) {
+                        currentTargetChinese = null;
+                    }
+                }
+                if (selectedIndices.length === cards.length) {
+                    handleLevelComplete();
+                } else {
+                    const remain = cards.length - selectedIndices.length;
+                    messageBox.innerHTML = `✅ ¡Correcto! Quedan ${remain}，haz clic en «Escuchar» para continuar`;
+                    isWaitingForMatch = false;
+                }
+            } else {
+                errorCount++;
+                updateErrorCounter();
+                cardEl.classList.add('wrong');
+                messageBox.innerHTML = `❌ No es correcto, intenta de nuevo (${errorCount}/${MAX_ERRORS})`;
+                setTimeout(() => cardEl.classList.remove('wrong'), 500);
+            }
+        }
+
+        // ---------- Completar nivel ----------
+        function handleLevelComplete() {
+            document.querySelectorAll('.card').forEach(c => c.classList.add('disabled'));
+            isWaitingForMatch = false;
+            levelFinished = true;
+
+            if (errorCount <= MAX_ERRORS) {
+                levelPassed = true;
+                if (currentLevel === 3) {
+                    gameCompleted = true;
+                    const msg = `🎉 ¡Felicidades! Has completado el desafío de esta ronda. 🎉`;
+                    messageBox.innerHTML = msg;
+                    playBtn.disabled = true;
+                    speakCelebration('¡Felicidades! Has completado el desafío de esta ronda.');
+                } else {
+                    messageBox.innerHTML = `🌟 ¡Bien hecho! Pasas al siguiente nivel.`;
+                    setTimeout(() => goToNextLevel(), 1200);
+                }
+            } else {
+                levelPassed = false;
+                messageBox.innerHTML = `⚠️ Has cometido más de ${MAX_ERRORS} errores en este nivel. No puedes avanzar. Haz clic en «Jugar de nuevo» para repetir este nivel.`;
+                playBtn.disabled = true;
+            }
+        }
+
+        function goToNextLevel() {
+            if (currentLevel >= 3) return;
+            currentLevel++;
+            errorCount = 0;
+            levelFinished = false;
+            levelPassed = false;
+            updateErrorCounter();
+            gameCompleted = false;
+            playBtn.disabled = false;
+            isWaitingForMatch = false;
+            setupLevel(currentLevel);
+        }
+
+        // ---------- Configurar nivel ----------
+        function setupLevel(level) {
+            selectedIndices = [];
+            isPlaying = false;
+            gameCompleted = false;
+            levelFinished = false;
+            levelPassed = false;
+            isWaitingForMatch = false;
+            currentTargetChinese = null;
+            if (synth && synth.speaking) synth.cancel();
+
+            if (level === 1) {
+                levelDisplay.textContent = 'Nivel 1';
+                subheadText.innerHTML = '🔊 Escucha español y elige la tarjeta china (con pinyin)';
+                const shuffled = shuffleCopy(VOCAB);
+                renderCards(shuffled, true);
+                audioQueue = shuffleCopy(VOCAB.map(item => ({ text: item.spanish, lang: 'es', chinese: item.chinese })));
+                messageBox.innerHTML = `🎯 Haz clic en «Escuchar» para oír el español y elige la palabra correcta`;
+            } 
+            else if (level === 2) {
+                levelDisplay.textContent = 'Nivel 2';
+                subheadText.innerHTML = '🔊 Escucha español y elige la tarjeta china (sin pinyin)';
+                const shuffled = shuffleCopy(VOCAB);
+                renderCards(shuffled, false);
+                audioQueue = shuffleCopy(VOCAB.map(item => ({ text: item.spanish, lang: 'es', chinese: item.chinese })));
+                messageBox.innerHTML = `🎯 Haz clic en «Escuchar» para oír el español y elige la palabra correcta (sin pinyin)`;
+            } 
+            else if (level === 3) {
+                levelDisplay.textContent = 'Nivel 3';
+                subheadText.innerHTML = '🔊 Escucha chino y elige la tarjeta en español';
+                const shuffled = shuffleCopy(VOCAB);
+                renderCardsLevel3(shuffled);
+                // 为第三关构建音频队列，使用分段语音函数
+                const chineseList = shuffleCopy(VOCAB.map(item => ({
+                    text: item.chinese,
+                    lang: 'zh-CN',
+                    chinese: item.chinese,
+                    isNameItem: (item.chinese === 'Carlos的哥哥' || item.chinese === 'Carlos的弟弟')
+                })));
+                audioQueue = chineseList;
+                if (audioQueue.length > 0) {
+                    currentTargetChinese = audioQueue[0].chinese;
+                }
+                messageBox.innerHTML = `🎯 Haz clic en «Escuchar» para oír el chino y elige la palabra en español`;
+            }
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('disabled'));
+            playBtn.disabled = false;
+            errorCount = 0;
+            updateErrorCounter();
+        }
+
+        // ---------- Reproducir audio ----------
+        async function playNextAudio() {
+            if (isPlaying) return;
+            if (gameCompleted) {
+                messageBox.innerHTML = `🏁 Juego completado. Haz clic en «Jugar de nuevo» para reiniciar`;
+                return;
+            }
+            if (levelFinished) {
+                if (!levelPassed) {
+                    messageBox.innerHTML = `⚠️ Este nivel tiene demasiados errores. Haz clic en «Jugar de nuevo» para repetirlo.`;
+                } else {
+                    messageBox.innerHTML = `✅ Ya has completado este nivel. ¡Sigue adelante!`;
+                }
+                return;
+            }
+            if (selectedIndices.length === cards.length) {
+                messageBox.innerHTML = `✅ ¡Has acertado todas! Haz clic en «Jugar de nuevo» para repetir`;
+                return;
+            }
+            if (audioQueue.length === 0) {
+                messageBox.innerHTML = `🎵 Todas las palabras ya se han reproducido, elige las tarjetas`;
+                return;
+            }
+
+            isPlaying = true;
+            playBtn.disabled = true;
+
+            const current = audioQueue[0];
+            if (currentLevel === 3 && current.chinese) {
+                currentTargetChinese = current.chinese;
+            }
+
+            try {
+                if (currentLevel === 3 && current.isNameItem) {
+                    // 第三关包含人名的词条：分段播放（西语人名 + 中文）
+                    await speakChineseWithName(current.text);
+                } else if (currentLevel === 3) {
+                    // 第三关普通词条：直接播放中文
+                    await speakText(current.text, 'zh-CN');
+                } else {
+                    // 第一、二关：播放西班牙语
+                    await speakText(current.text, 'es');
+                }
+            } catch (e) {}
+
+            isWaitingForMatch = true;
+            isPlaying = false;
+            playBtn.disabled = false;
+
+            const remain = cards.length - selectedIndices.length;
+            messageBox.innerHTML = `🔊 Reproducido, elige la tarjeta correspondiente (quedan ${remain})`;
+        }
+
+        // ---------- Reiniciar / Salir ----------
+        function resetGame() {
+            if (synth && synth.speaking) synth.cancel();
+            currentLevel = 1;
+            errorCount = 0;
+            levelFinished = false;
+            levelPassed = false;
+            updateErrorCounter();
+            gameCompleted = false;
+            playBtn.disabled = false;
+            isWaitingForMatch = false;
+            currentTargetChinese = null;
+            setupLevel(1);
+            messageBox.innerHTML = `🔄 Reiniciado desde el Nivel 1`;
+        }
+
+        function exitGame() {
+            if (synth && synth.speaking) synth.cancel();
+            messageBox.innerHTML = `👋 ¡Hasta luego! Recarga la página para volver a jugar`;
+            document.querySelectorAll('.card').forEach(c => c.classList.add('disabled'));
+            playBtn.disabled = true;
+            resetBtn.disabled = true;
+            exitBtn.disabled = true;
+        }
+
+        // ---------- Eventos ----------
+        playBtn.addEventListener('click', playNextAudio);
+        resetBtn.addEventListener('click', resetGame);
+        exitBtn.addEventListener('click', exitGame);
+
+        // ---------- Iniciar ----------
+        setupLevel(1);
+    })();
+</script>
+</body>
+</html>
